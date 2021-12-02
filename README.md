@@ -1,20 +1,26 @@
 Advent-of-Code-2021
 
 
->>> To build use
-g++ -std=c++17 ./main.cpp
->>> To debug use
-g++ -g -std=c++17 ./main.cpp
+> To build use
+>>g++ -std=c++17 ./main.cpp
+
+> To debug use
+>> g++ -g -std=c++17 ./main.cpp
 
 
->>> gdb
+> gdb
 >>next line 
-n
+>>>n
+>
 >> Setting a break point
-break <func name> 
->>> Running the program
-run
+>>>break <func name>
+>
+>> Running the program
+>>> run
+>
 >> Sowing source code
-layout src
+>>>layout src
+>
 >> Deleting break points
-delete
+>>>delete
+
