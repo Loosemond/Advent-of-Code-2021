@@ -16,91 +16,74 @@ public:
     Payload(){};
 };
 
-Payload findMatch(string_view s);
+int findMatch(string_view s, int &p, int &errorPoints);
 char oppositeChar(const char &c);
 int pointsCalc(const char &c);
+bool isClosed(const char &c);
 
 int main()
 {
 
-    freopen("testInput.txt", "r", stdin);
+    freopen("input.txt", "r", stdin);
     string line;
     int p;
-    int start = 0;
     Payload decode;
     int errorPoints = 0;
+    int total = 0;
+
     while (getline(cin, line))
     {
-        start = 0;
+        p = 0;
+        errorPoints = 0;
 
-        while (line.size() - start > 0)
-        {
-            decode = findMatch(line.substr(start, line.size() - start));
-            start = decode.right;
-            errorPoints += decode.left;
-        }
+        findMatch(line, p, errorPoints);
+        // if (errorPoints != 0)
+        // {
+        //     cout << "line: " << line << " points: " << errorPoints << "\n";
+        // }
+        total += errorPoints;
     }
-    cout << errorPoints << "\n";
+    cout << total << "\n";
 }
 int iterateLine()
 {
 }
 
-Payload findMatch(string_view s)
+int findMatch(string_view s, int &p, int &errorPoints)
 {
 
-    // will receive a character and a string
-    // will search the matching closing character
-    // need to count the numer of times we find the same simboll wile searching
-    // Find the first illegal character in each corrupted line of the navigation subsystem.
-    // What is the total syntax error score for those errors?
-    // needs to be recursive
-    // wile we still s =! null we can keep iterating smaller and smaller substrings
-    // if we find a match e call another findMatch till we cant call any more in that case we should return 0
-    // if we dont find a match we can stop everything and return the the error value
+    /* read the 1s string
+if open
+    read next string
+        if open calls it self
+        if closed and the same type ends successfully 
+        if closed and different type end with error and returns error points
+if closed and the same type ends successfully 
+if closed and different type end with error and returns error points
 
-    // we need to check ir a block outside the block we are checking does not close (if i use the stratagie defined up we check this)
-    // left score
-    // right the right most closed loop ??
+*/
 
-    const char c = oppositeChar(s[0]);
+    const char c = oppositeChar(s[p]);
     int nOcur = 0;
     int closeP; // may not work
-    Payload ret;
-    int i = 1;
-    while (i < s.size())
+
+    // cout << s[p] << "\n";
+    while (p < s.length() && !isClosed(s[p + 1]) && errorPoints == 0) // we dont want to find all the errors
     {
-
-        if (s[i] == s[0]) // found a nother matching signal open
-        {
-            nOcur++;
-        }
-        else if (s[i] == c)
-        {
-            nOcur--;
-            if (nOcur == -1)
-            {
-                if (i - 2 > 0)                           // we remove the 1s and last char
-                {                                        // check if the substring isn't null
-                    ret = findMatch(s.substr(1, i - 1)); // in this case we just want to find the first occurrance
-                    closeP = i;
-                    break;
-                }
-                if (i == 1) // Check this
-                {
-                    ret = findMatch(s.substr(2, s.size() - 2)); // in this case we just want to find the first occurrance
-                    closeP = i;
-                    break;
-                }
-
-                // return pointsCalc(s[0]);
-            }
-        }
-        i++;
+        p++;
+        findMatch(s, p, errorPoints);
     }
-    if (i == s.size())
-        return Payload(pointsCalc(s[0]), closeP);
-    return Payload(ret.left, ret.right);
+    if (s[p + 1] == c)
+    { // if closes and is the same type
+        p += 1;
+        return 0;
+    }
+    // case it closes and is a different type Ends loop
+    if (p < s.length() && errorPoints == 0)
+    {
+        errorPoints += pointsCalc(s[p + 1]);
+    }
+    return 0;
 }
 
 char oppositeChar(const char &c)
@@ -120,17 +103,34 @@ char oppositeChar(const char &c)
     }
 }
 
+bool isClosed(const char &c)
+{
+    switch (c)
+    {
+    case ')':
+        return true;
+    case '}':
+        return true;
+    case ']':
+        return true;
+    case '>':
+        return true;
+    default:
+        return false;
+    }
+}
+
 int pointsCalc(const char &c)
 {
     switch (c)
     {
-    case '(':
+    case ')':
         return 3;
-    case '{':
+    case ']':
         return 57;
-    case '[':
+    case '}':
         return 1197;
-    case '<':
+    case '>':
         return 25137;
     default:
         return 0;
