@@ -68,7 +68,7 @@ if closed and different type end with error and returns error points
     int closeP; // may not work
 
     // cout << s[p] << "\n";
-    while (p < s.length() && !isClosed(s[p + 1]) && errorPoints == 0) // we dont want to find all the errors
+    while (p < s.length() && !isClosed(s[p + 1]))
     {
         p++;
         findMatch(s, p, errorPoints);
